@@ -1,25 +1,40 @@
 <?php
 
-    session_start();
+session_start();
 
-    require "includes/functions.php";
+// !isset() = is not set
+// if $_SESSION['signup_form_csrf_token'] is not set, generate a new token
+// when token is already available, we won't regenerate it again
 
-    require "includes/class-authentication.php";
+if ( !isset( $_SESSION['signup_form_csrf_token'] ) ) {
+  // generate csrf token
+  $_SESSION['signup_form_csrf_token'] = bin2hex( random_bytes(32) );
+}
 
-    // process the sign up form
-    if ( $_SERVER["REQUEST_METHOD"] === 'POST' ) {
+require "includes/functions.php";
 
-      $email = $_POST["email"];
-      $password = $_POST["password"];
-      $confirm_password = $_POST["confirm_password"];
+require "includes/class-authentication.php";
 
-      $auth = new Authentication();
-      $error = $auth->signup(
-        $email,
-        $password,
-        $confirm_password
-      );
-    }
+// process the sign up form
+if ( $_SERVER["REQUEST_METHOD"] === 'POST' ) {
+
+  // verify the csrf token is correct or not
+  if ( $_POST['signup_form_csrf_token'] !== $_SESSION['signup_form_csrf_token'] )
+  {
+    die("Nice try! But I'm smarter than you!");
+  }
+
+  $email = $_POST["email"];
+  $password = $_POST["password"];
+  $confirm_password = $_POST["confirm_password"];
+
+  $auth = new Authentication();
+  $error = $auth->signup(
+    $email,
+    $password,
+    $confirm_password
+  );
+}
 
     // require the header part
     require "parts/header.php";
