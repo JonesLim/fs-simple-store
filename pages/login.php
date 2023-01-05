@@ -77,8 +77,8 @@
               </div>
               <input 
                 type="hidden"
-                name="csrf_token"
-                value="<?php echo bin2hex( random_bytes(32) ); ?>"
+                name="login_form_csrf_token"
+                value="<?php echo $_SESSION['login_form_csrf_token']; ?>"
                 />
             </form>
           </div>

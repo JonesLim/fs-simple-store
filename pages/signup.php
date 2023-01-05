@@ -11,12 +11,17 @@ if ( !isset( $_SESSION['signup_form_csrf_token'] ) ) {
   $_SESSION['signup_form_csrf_token'] = bin2hex( random_bytes(32) );
 }
 
+var_dump( $_SESSION['signup_form_csrf_token'] );
+
 require "includes/functions.php";
 
 require "includes/class-authentication.php";
 
 // process the sign up form
 if ( $_SERVER["REQUEST_METHOD"] === 'POST' ) {
+
+  var_dump( $_POST['signup_form_csrf_token'] );
+  var_dump( $_SESSION['signup_form_csrf_token'] );
 
   // verify the csrf token is correct or not
   if ( $_POST['signup_form_csrf_token'] !== $_SESSION['signup_form_csrf_token'] )
@@ -88,6 +93,11 @@ if ( $_SERVER["REQUEST_METHOD"] === 'POST' ) {
                   Sign Up
                 </button>
               </div>
+              <input 
+                type="hidden"
+                name="signup_form_csrf_token"
+                value="<?php echo $_SESSION['signup_form_csrf_token']; ?>"
+                />
             </form>
           </div>
         </div>
